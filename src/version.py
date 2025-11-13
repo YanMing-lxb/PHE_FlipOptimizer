@@ -26,6 +26,6 @@ Description  :
 #!/usr/bin/env python
 
 __project_name__ = 'phe_flipoptimizer'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 __author__ = '焱铭'
 __url__ = "https://github.com/YanMing-lxb"

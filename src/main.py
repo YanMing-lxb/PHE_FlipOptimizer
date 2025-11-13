@@ -28,7 +28,7 @@ from typing import Dict, Any
 import os
 import sys
 from rich.console import Console
-from version import __version__
+from version import __version__, __url__
 
 def resource_path(relative_path):
     """获取资源文件的绝对路径"""
@@ -160,7 +160,10 @@ def print_result(params: dict, result: dict):
     console.print("=" * 40)
 
     console.print("注意: 优化后的尺寸指的是通道间距大的板片", style="bold")
+    
     console.print(" " * 30 + "by YanMing", style="cyan")
+    print("")
+    console.print(f"作者主页: {__url__}", style="cyan")
 
 
 def main():
