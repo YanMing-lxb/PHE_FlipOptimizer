@@ -1,4 +1,4 @@
-'''
+"""
  =======================================================================
  ····Y88b···d88P················888b·····d888·d8b·······················
  ·····Y88b·d88P·················8888b···d8888·Y8P·······················
@@ -16,15 +16,29 @@
  -----------------------------------------------------------------------
 Author       : 焱铭
 Date         : 2025-11-13 13:10:34 +0800
-LastEditTime : 2025-11-13 16:37:15 +0800
+LastEditTime : 2025-11-13 18:57:45 +0800
 Github       : https://github.com/YanMing-lxb/
 FilePath     : /PHE_FlipOptimizer/src/main.py
-Description  : 
+Description  :
  -----------------------------------------------------------------------
-'''
+"""
 
 import math
 from typing import Dict, Any
+import os
+import sys
+from rich.console import Console
+
+
+def resource_path(relative_path):
+    """获取资源文件的绝对路径"""
+    try:
+        # PyInstaller创建临时文件夹，将路径存储在_MEIPASS中
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 def tool_phe_flip(
@@ -37,7 +51,7 @@ def tool_phe_flip(
 ) -> Dict[str, Any]:
     """
     计算板式换热器的翻边参数优化结果
-    
+
     该函数基于给定的板片参数，计算出优化后的翻边偏移量、角度等参数，
     用于指导板片制造中的翻边工艺设计。
 
@@ -68,56 +82,47 @@ def tool_phe_flip(
         - width: 优化后板片宽度(mm)
         - fillet_radius: 优化后圆角半径(mm)
     """
-    
+
     opposite = 2 * thinkness
     hypotenuse = spacing_a + spacing_b + 2 * thinkness
     angle = math.degrees(math.asin(opposite / hypotenuse))
 
     # 计算翻边偏移量
-    hypotenuse_min = spacing_a + thinkness - hypotenuse / 2 
+    hypotenuse_min = max(spacing_a, spacing_b) + thinkness - hypotenuse / 2
     offset = hypotenuse_min * math.tan(math.radians(angle))
 
     flip_angle = 90 + angle
     draft_angle = angle
-    length = length - 2* offset
+    length = length - 2 * offset
     width = width - 2 * offset
     fillet_radius = fillet_radius - offset
-    
+
     return {
-        "offset": offset, 
-        "angle": angle, 
-        "flip_angle": flip_angle, 
-        "draft_angle": draft_angle, 
-        "length": length, 
-        "width": width, 
-        "fillet_radius": fillet_radius
+        "offset": offset,
+        "angle": angle,
+        "flip_angle": flip_angle,
+        "draft_angle": draft_angle,
+        "length": length,
+        "width": width,
+        "fillet_radius": fillet_radius,
     }
 
 
-# ANSI颜色代码
-class Colors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+# 创建一个Console实例用于富文本输出
+console = Console()
 
 
 def get_user_input(prompt: str, value_type: type = float) -> float:
     """
     获取用户输入并验证类型
-    
+
     Parameters
     ----------
     prompt : str
         提示信息
     value_type : type
         期望的数据类型
-        
+
     Returns
     -------
     float
@@ -125,16 +130,16 @@ def get_user_input(prompt: str, value_type: type = float) -> float:
     """
     while True:
         try:
-            user_input = input(Colors.OKCYAN + prompt + Colors.ENDC)
+            user_input = input(prompt)
             return value_type(user_input)
         except ValueError:
-            print(Colors.FAIL + "输入无效，请重新输入！" + Colors.ENDC)
+            console.print("输入无效，请重新输入！", style="red")
 
 
 def print_result(params: dict, result: dict):
     """
     打印计算结果
-    
+
     Parameters
     ----------
     params : dict
@@ -142,44 +147,47 @@ def print_result(params: dict, result: dict):
     result : dict
         计算结果字典
     """
-    
+
     # 打印计算结果
-    print("-" * 40)
-    print(Colors.OKGREEN + Colors.BOLD + "优化结果:" + Colors.ENDC)
-    print(Colors.OKBLUE + f"  板片等距偏移量: {result['offset']:.4f} mm" + Colors.ENDC)
-    print(Colors.OKBLUE + f"  翻边角度: {result['flip_angle']:.2f} deg" + Colors.ENDC)
-    print(Colors.OKBLUE + f"  拔模角度:  {result['draft_angle']:.2f} deg" + Colors.ENDC)
-    print(Colors.WARNING + f"  优化后板片长度: {result['length']:.4f} mm" + Colors.ENDC)
-    print(Colors.WARNING + f"  优化后板片宽度: {result['width']:.4f} mm" + Colors.ENDC)
-    print(Colors.WARNING + f"  优化后圆角半径: {result['fillet_radius']:.4f} mm" + Colors.ENDC)
-    print("=" * 40)
-    print(Colors.OKCYAN + ' '*30 + "by YanMing" + Colors.ENDC)
+    console.print("-" * 40)
+    console.print("优化结果:", style="bold green")
+    console.print(f"  板片等距偏移量: {result['offset']:.4f} mm")
+    console.print(f"  翻边角度: {result['flip_angle']:.2f} deg")
+    console.print(f"  拔模角度:  {result['draft_angle']:.2f} deg")
+    console.print(f"  优化后板片长度: {result['length']:.4f} mm")
+    console.print(f"  优化后板片宽度: {result['width']:.4f} mm")
+    console.print(f"  优化后圆角半径: {result['fillet_radius']:.4f} mm")
+    console.print("=" * 40)
+
+    console.print("注意: 优化后的尺寸指的是通道间距大的板片", style="bold")
+    console.print(" " * 30 + "by YanMing", style="cyan")
 
 
 def main():
-    print("=" * 40)
-    print(Colors.OKGREEN + Colors.BOLD + "板式换热器翻边计算工具" + Colors.ENDC)
-    print("=" * 40)
-    print(Colors.OKCYAN + "请输入参数：" + Colors.ENDC)
-    
+    print(" ")
+    console.print("=" * 40)
+    console.print(" " * 8 + "板式换热器翻边计算工具", style="bold green")
+    console.print("=" * 40)
+    console.print("请输入参数：", style="cyan")
+
     # 获取用户输入
     params = {
-        'spacing_a': get_user_input(" A 侧通道间距 (mm): "),
-        'spacing_b': get_user_input(" B 侧通道间距 (mm): "),
-        'length': get_user_input(" 板片长度 (mm): "),
-        'width': get_user_input(" 板片宽度 (mm): "),
-        'thinkness': get_user_input(" 板片厚度 (mm): "),
-        'fillet_radius': get_user_input(" 圆角半径 (mm): ")
+        "spacing_a": get_user_input(" A 侧通道间距 (mm): "),
+        "spacing_b": get_user_input(" B 侧通道间距 (mm): "),
+        "thinkness": get_user_input(" 板片厚度 (mm): "),
+        "length": get_user_input(" 板片长度 (mm): "),
+        "width": get_user_input(" 板片宽度 (mm): "),
+        "fillet_radius": get_user_input(" 圆角半径 (mm): "),
     }
-    
+
     # 计算结果
     result = tool_phe_flip(**params)
-    
+
     # 显示结果
     print_result(params, result)
-    
+
     # 等待用户按键退出
-    input(Colors.OKCYAN + "\n按任意键退出..." + Colors.ENDC)
+    input("按任意键退出...")
 
 
 if __name__ == "__main__":
