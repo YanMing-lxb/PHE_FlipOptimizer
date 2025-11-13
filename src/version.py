@@ -16,9 +16,9 @@
  -----------------------------------------------------------------------
 Author       : 焱铭
 Date         : 2024-03-01 15:52:28 +0800
-LastEditTime : 2025-11-07 11:15:28 +0800
+LastEditTime : 2025-11-13 22:15:29 +0800
 Github       : https://github.com/YanMing-lxb/
-FilePath     : /egasp/src/egasp/version.py
+FilePath     : /PHE_FlipOptimizer/src/version.py
 Description  : 
  -----------------------------------------------------------------------
 '''
@@ -26,6 +26,6 @@ Description  :
 #!/usr/bin/env python
 
 __project_name__ = 'phe_flipoptimizer'
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__ = '焱铭'
 __url__ = "https://github.com/YanMing-lxb"
