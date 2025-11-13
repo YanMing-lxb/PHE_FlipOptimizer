@@ -16,9 +16,9 @@
  -----------------------------------------------------------------------
 Author       : 焱铭
 Date         : 2025-11-06 21:00:18 +0800
-LastEditTime : 2025-11-06 22:09:33 +0800
+LastEditTime : 2025-11-13 22:21:40 +0800
 Github       : https://github.com/YanMing-lxb/
-FilePath     : /egasp/tools/pack.py
+FilePath     : /PHE_FlipOptimizer/tools/pack.py
 Description  : 
  -----------------------------------------------------------------------
 '''
@@ -54,6 +54,7 @@ def run_pyinstaller() -> bool:
     """
     args = [
         "pyinstaller",
+        "--onefile",
         "--name",
         PROJECT_NAME,
         "--workpath",
