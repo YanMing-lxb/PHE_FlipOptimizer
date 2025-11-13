@@ -28,7 +28,7 @@ from typing import Dict, Any
 import os
 import sys
 from rich.console import Console
-
+from version import __version__
 
 def resource_path(relative_path):
     """获取资源文件的绝对路径"""
@@ -166,7 +166,7 @@ def print_result(params: dict, result: dict):
 def main():
     print(" ")
     console.print("=" * 40)
-    console.print(" " * 8 + "板式换热器翻边计算工具", style="bold green")
+    console.print(" " * 5 + f"板式换热器翻边计算工具 v{__version__}", style="bold green")
     console.print("=" * 40)
     console.print("请输入参数：", style="cyan")
 
